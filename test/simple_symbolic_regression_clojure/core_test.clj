@@ -17,8 +17,6 @@
       (run-script [] {}) => []
       (run-script [1 2 3] {}) => [1 2 3])
 
-;; (fact "the interpreter gets the script [1 2 +] and returns 3 with stack [3]"
-;;       (interpret [1 2 +] {}) => {:result 3, :stack [3]})
 
 (facts "about process-token with +"
        (fact "process-token with + and an empty stack"
@@ -31,3 +29,27 @@
              (process-token [2/3 5/6] +) => [3/2]
              )
        )
+
+(facts "about process-token with -"
+       (fact "process-token with - and an empty stack"
+             (process-token [] -) => [])
+       (fact "process-token with - and only one number"
+             (process-token [7] -) => [7])
+       (fact "process-token with - and two numbers"
+             (process-token [3 5] -) => [-2]
+             (process-token [1.2 -3.4] -) => [4.6]
+             (process-token [2/3 5/6] -) => [-1/6]
+             )
+       )
+
+
+;; interpreter
+
+(fact "the interpreter does addition"
+      (interpret [1 2 +] {}) => {:result 3, :stack [3]}
+      (interpret [1 +] {}) => {:result 1, :stack [1]}
+      (interpret [+] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 +] {}) => {:result 7, :stack [1 2 7]}
+      (interpret [1 2 3 + 4 5 7 +] {}) => {:result 12, :stack [1 5 4 12]}
+      (interpret [1 2 3 4 5 + + +] {}) => {:result 14, :stack [1 14]}
+      )

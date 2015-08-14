@@ -1,13 +1,20 @@
 (ns simple-symbolic-regression-clojure.core)
 
+(defn process-binary-operator [op stack]
+  "Apply a binary operator to the given stack, returning the updated stack"
+  (if (>= (count stack) 2)
+    (let [arg2 (peek stack)
+          arg1 (peek (pop stack))
+          new-stack (pop (pop stack))]
+      (conj new-stack
+            (op arg1 arg2)))
+    stack))
+
 (defn process-token [stack token]
   "Process given token returning the updated stack"
   (cond
    (number? token) (conj stack token)
-   (and (= token +) (>= (count stack) 2))
-     (conj (drop 2 stack)
-           (+ (first stack)
-              (second stack)))
+   (or (= token +) (= token -)) (process-binary-operator token stack)
    :else stack)
   )
 
