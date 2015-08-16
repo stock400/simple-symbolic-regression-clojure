@@ -2,7 +2,19 @@
 
 A simple Clojure implementation of a genetic programming symbolic regression system.
 
-The project uses [Midje](https://github.com/marick/Midje/).
+## To-dos
+
+ * Write the interpreter
+   * Mostly done except for variables
+ * Compute the error of a script on a set of rubrics
+ * Store script and error in an `Individual` record
+ * Have a population (vector? set?) of `Individuals`
+ * Select "winning" `Individual`s from a population (stochastic) (binary tournaments?)
+ * Implement simple 2-pt XO on scripts
+ * Implement simple mutation on scripts
+ * Use these to create new population
+   * This assumes generational. Steady state instead? Or go with @Vaguary's model and just add individuals to an ever-increasing pot?
+ * Run this thing!
 
 ## Interpreter
 
@@ -28,6 +40,8 @@ When we process an item in the script we'll:
  * Otherwise apply it as a function.
 
 ## How to run the tests
+
+The project uses [Midje](https://github.com/marick/Midje/).
 
 `lein midje` will run all tests.
 
