@@ -1,5 +1,16 @@
 (ns simple-symbolic-regression-clojure.core)
 
+(defn translate-op [op]
+  "Translate operators from the symbolic regression language to
+   the appropriate Clojure operator for evaluation. A key goal
+   here is replacing +, -, and * with +', -', and *' so we don't
+   have unexpected overflow exceptions."
+  (condp = op
+    + +'
+    - -'
+    * *'
+    op))
+
 (defn legal-division-stack? [stack]
   (not (zero? (peek stack))))
 
@@ -15,14 +26,17 @@
           arg1 (peek (pop stack))
           new-stack (pop (pop stack))]
       (conj new-stack
-            (op arg1 arg2)))
+            ((translate-op op) arg1 arg2)))
     stack))
+
+(defn binary-operator? [token]
+  (contains? #{+ - * /} token))
 
 (defn process-token [stack token]
   "Process given token returning the updated stack"
   (cond
    (number? token) (conj stack token)
-   (or (= token +) (= token -) (= token /)) (process-binary-operator token stack)
+   (binary-operator? token) (process-binary-operator token stack)
    :else stack)
   )
 

@@ -17,7 +17,6 @@
       (run-script [] {}) => []
       (run-script [1 2 3] {}) => [1 2 3])
 
-
 (facts "about process-token with +"
        (fact "process-token with + and an empty stack"
              (process-token [] +) => [])
@@ -62,6 +61,25 @@
              )
        )
 
+(facts "about process-token with *"
+       (fact "process-token with * and an empty stack"
+             (process-token [] *) => [])
+       (fact "process-token with * and only one number"
+             (process-token [7] *) => [7])
+       (fact "process-token with * and two numbers"
+             (process-token [3 5] *) => [15]
+             (process-token [1.2 -3.4] *) => [-4.08]
+             (process-token [2/3 5/6] *) => [5/9]
+             (process-token [0 0] *) => [0]
+             )
+       (fact "process-token with * and really large arguments"
+             (process-token [1111111111111 22222222222222222222222222222] *)
+               => [24691358024688888888888888888641975308642N]
+             (process-token [111111 22222222222222222] *)
+               => [2469133333333333308642N]
+             )
+       )
+
 ;; interpreter
 
 (fact "the interpreter does addition"
@@ -95,6 +113,16 @@
                                                      :stack [1.0 (/ 2.0 (/ 3.0 (/ 4.0 5.0)))]}
       )
 
-;;; We're going to have to care about bigints in some fashion.
-;; (fact "the interpreter does multiplication"
-;;       (interpret [11111111111 2222222222222222 *] {}) => {:result 3, :stack [3]}
+(fact "the interpreter does multiplication"
+      (interpret [3 2 *] {}) => {:result 6, :stack [6]}
+      (interpret [3 *] {}) => {:result 3, :stack [3]}
+      (interpret [*] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 *] {}) => {:result 12, :stack [1 2 12]}
+      (interpret [1 2 3 * 4 5 7 *] {}) => {:result 35, :stack [1 6 4 35]}
+      (interpret [1 2 3 4 5 * * *] {}) => {:result 120, :stack [1 120]}
+      )
+
+(fact "the interpreter does mixed operation arithmetic"
+      (interpret [1 2 3 4 5 * + / -] {}) => {:result 21/23, :stack [21/23]}
+      (interpret [1 2 * 3 + 4 / 5 -] {}) => {:result -15/4, :stack [-15/4]}
+      )
