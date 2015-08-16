@@ -8,11 +8,12 @@ A simple Clojure implementation of a genetic programming symbolic regression sys
    * Mostly done except for variables
  * Compute the error of a script on a set of rubrics
  * Store script and error in an `Individual` record
- * Have a population (vector? set?) of `Individuals`
- * Select "winning" `Individual`s from a population (stochastic) (binary tournaments?)
- * Implement simple 2-pt XO on scripts
- * Implement simple mutation on scripts
- * Use these to create new population
+ * Have a population of `Individuals`
+   * Probably a vector, but could be a set?
+ * Select "winning" `Individual`s from a population (**stochastic**) (binary tournaments?)
+ * Implement simple 2-pt XO on scripts (**stochastic**)
+ * Implement simple mutation on scripts (**stochastic**)
+ * Use these to create new population (**stochastic**)
    * This assumes generational. Steady state instead? Or go with @Vaguary's model and just add individuals to an ever-increasing pot?
  * Run this thing!
 
