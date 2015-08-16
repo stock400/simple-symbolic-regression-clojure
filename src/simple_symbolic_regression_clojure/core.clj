@@ -1,4 +1,8 @@
-(ns simple-symbolic-regression-clojure.core)
+(ns simple-symbolic-regression-clojure.core
+  (:use [clojure.math.numeric-tower])
+  )
+
+;;; Interpreter
 
 (defn legal-division-stack? [stack]
   (not (zero? (peek stack))))
@@ -35,3 +39,11 @@
   (let [stack (run-script script bindings)
         answer (peek stack)]
     {:result answer, :stack stack}))
+
+;;; Rubrics
+
+(defrecord Rubric [input output])
+
+(defn error-on [script rubric]
+  (let [result (:result (interpret script {}))]
+    (abs (- (:output rubric) result))))

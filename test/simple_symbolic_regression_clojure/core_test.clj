@@ -1,6 +1,7 @@
 (ns simple-symbolic-regression-clojure.core-test
   (:use midje.sweet)
-  (:use [simple-symbolic-regression-clojure.core]))
+  (:use [simple-symbolic-regression-clojure.core])
+  )
 
 (fact "it gets a empty program and an empty binding it returns nil with an empty stack"
       (interpret [] {}) => {:result nil, :stack []})
@@ -95,6 +96,22 @@
                                                      :stack [1.0 (/ 2.0 (/ 3.0 (/ 4.0 5.0)))]}
       )
 
-;;; We're going to have to care about bigints in some fashion.
-;; (fact "the interpreter does multiplication"
-;;       (interpret [11111111111 2222222222222222 *] {}) => {:result 3, :stack [3]}
+;;; rubrics
+
+(fact "we can construct rubrics and access their components"
+      (let [rubric (->Rubric 1 2)]
+        (:input rubric) => 1
+        (:output rubric) => 2
+        ))
+
+(fact "we can compute the error of a script on a rubric"
+      (let [script [2 4 +]
+            rubric (->Rubric 3 5)]
+        (error-on script rubric) => 1)
+      (let [script [4 20 -]
+            rubric (->Rubric 3 5)]
+        (error-on script rubric) => 21)
+      (let [script [1 2 3 + +]
+            rubric (->Rubric 0 6)]
+        (error-on script rubric) => 0)
+      )
