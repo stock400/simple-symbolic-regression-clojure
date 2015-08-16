@@ -1,12 +1,13 @@
 # simple-symbolic-regression-clojure
 
-A simple Clojure implementation of a genetic programming symbolic regression system.
+A simple Clojure implementation of a genetic programming symbolic regression system. This is essentially a serial (non-parallel, non-distributed) implementation of a very simple GP system that students can use as a starting point for creating parallel or distributed implementations. To keep things simple, we're (at least initially) _only_ focusing on parallelizing the evaluation of individual scripts, and not worrying about adding concurrency to things like selection, crossover, and building new populations.
 
 ## To-dos
 
  * Write the interpreter
    * Mostly done except for variables
  * Compute the error of a script on a set of rubrics
+   * This is ultimately what the students will parallelize/distribute
  * Store script and error in an `Individual` record
  * Have a population of `Individuals`
    * Probably a vector, but could be a set?
