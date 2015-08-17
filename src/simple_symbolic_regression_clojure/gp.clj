@@ -1,7 +1,6 @@
 (ns simple-symbolic-regression-clojure.gp
   )
 
-
 (defn random-token
   "Argument is a list of tokens, including functions to generate values if you like;
   every token is evaluated as it is returned, and they are sampled with uniform probability."
@@ -10,7 +9,6 @@
     nil
     (eval (nth tokens (rand-int (count tokens))))
   ))
-
 
 (defn uniform-crossover
   "Takes two collections, and returns a new collection containing items taken with
@@ -25,12 +23,12 @@
   resamples eachposition with i.i.d. probability, using the token list to replace them.
   The result will not change length."
   [mom tokens prob]
-  (map 
-    (fn [i] 
+  (map
+    (fn [i]
       (if (or (> (rand) prob) (empty? tokens))
         i
-        (random-token tokens) 
-        )) 
+        (random-token tokens)
+        ))
     mom)
   )
 
@@ -41,5 +39,16 @@
   [mom dad]
   (let [mom-cut (rand-int (count mom))
         dad-cut (rand-int (count dad))]
-    (concat (take mom-cut mom) (drop dad-cut dad)) 
+    (concat (take mom-cut mom) (drop dad-cut dad))
   ))
+
+(defrecord Individual [script score])
+
+(defn make-individual
+  ([script]
+   (make-individual script nil))
+  ([script score]
+   (->Individual script score)))
+
+(defn set-score [individual score]
+  (assoc individual :score score))

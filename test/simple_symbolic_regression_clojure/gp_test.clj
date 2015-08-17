@@ -71,7 +71,6 @@
   (count (uniform-crossover [] [1 1 1 1 1])) => 0
   )
 
-
 ;; uniform mutation
 
 (fact "uniform mutation takes a collection, and changes each position to a new sampled value with specified probability"
@@ -98,3 +97,35 @@
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [2])
       ))
   )
+
+; Can't use `just` here - it seems to be too strict.
+; We may want to remove some of the other uses of `just` elsewhere in the tests.
+
+(facts "can construct an Individual and access its script and score"
+       (fact "works with non-nil scores"
+             (let [script [:x :y +]
+                   individual (make-individual script 12)]
+               (:script individual) => script
+               (:score individual) => 12))
+       (fact "works with nil score"
+             (let [script [:x :y +]
+                   individual (make-individual script nil)]
+               (:script individual) => script
+               (:score individual) => nil))
+       (fact "works with no score given"
+             (let [script [:x :y +]
+                   individual (make-individual script)]
+               (:script individual) => script
+               (:score individual) => nil))
+       )
+
+(fact "can set the score of an individual"
+      (let [script [:x :y +]
+            score 27
+            individual (make-individual script)
+            scored-individual (set-score individual score)]
+        (:script individual) => script
+        (:score individual) => nil
+        (:script scored-individual) => script
+        (:score scored-individual) => score
+        ))
