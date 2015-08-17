@@ -6,8 +6,10 @@
   "Argument is a list of tokens, including functions to generate values if you like;
   every token is evaluated as it is returned, and they are sampled with uniform probability."
   [tokens]
-  (eval (nth tokens (rand-int (count tokens))))
-  )
+  (if (empty? tokens)
+    nil
+    (eval (nth tokens (rand-int (count tokens))))
+  ))
 
 
 (defn uniform-crossover
@@ -23,7 +25,13 @@
   resamples eachposition with i.i.d. probability, using the token list to replace them.
   The result will not change length."
   [mom tokens prob]
-  (map (fn [i] (if (< (rand) prob) (random-token tokens) i)) mom)
+  (map 
+    (fn [i] 
+      (if (or (> (rand) prob) (empty? tokens))
+        i
+        (random-token tokens) 
+        )) 
+    mom)
   )
 
 (defn one-point-crossover

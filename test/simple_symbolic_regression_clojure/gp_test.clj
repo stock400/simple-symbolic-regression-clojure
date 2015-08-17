@@ -65,6 +65,10 @@
     (into #{} (repeatedly 100 #(random-token [:x :+ '(rand-int 5)]))) => (just [0 1 2 3 4 :x :+])
   )
 
+(fact "random-token returns nil when passed an empty collection"
+    (random-token []) => nil
+  )
+
 ;; uniform crossover
 
 (fact "uniform crossover takes two collections and picks the value at each position with equal probability from each parent"
@@ -78,6 +82,12 @@
   (count (uniform-crossover [1 1 1 1 1] [2])) => 1
   )
 
+(fact "uniform crossover works with empty collections"
+  (count (uniform-crossover [1 1 1 1 1] [])) => 0
+  (count (uniform-crossover [1 1 1 1 1] [])) => 0
+  )
+
+
 ;; uniform mutation
 
 (fact "uniform mutation takes a collection, and changes each position to a new sampled value with specified probability"
@@ -87,6 +97,10 @@
     (into #{} (uniform-mutation [1 1 1 1 1 1 1 1 1 1] ['(+ 9 (rand-int 2))] 1.0)) => (just #{9 10})
   )
 
+(fact "uniform mutation works with empty collections"
+    (uniform-mutation [] [4] 1.0) => (just [])
+    (uniform-mutation [1 1 1 1] [] 1.0) => (just [1 1 1 1])
+    )
 
 ;; uneven one-point-crossover
 
