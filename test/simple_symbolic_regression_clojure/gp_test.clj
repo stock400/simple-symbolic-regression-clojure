@@ -84,7 +84,7 @@
 
 (fact "uniform crossover works with empty collections"
   (count (uniform-crossover [1 1 1 1 1] [])) => 0
-  (count (uniform-crossover [1 1 1 1 1] [])) => 0
+  (count (uniform-crossover [] [1 1 1 1 1])) => 0
   )
 
 
@@ -105,11 +105,12 @@
 ;; uneven one-point-crossover
 
 (fact "one-point crossover takes two collections and splices them together at a randomly chosen internal point"
-  (let [stubby (cycler [3 3 2 4 1 5 7 0])] ;; these will be used in pairs to pick slice points
+  (let [stubby (cycler [3 3 2 4 1 5 7 0 0 7])] ;; these will be used in pairs to pick slice points
     (with-redefs [rand-int (fn [arg] (step-cycler stubby))]
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 1 1 2 2 2 2 2])
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 1 2 2 2 2])
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 2 2 2])
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 1 1 1 1 1 1 2 2 2 2 2 2 2 2])
+      (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [2])
       )) 
   )
