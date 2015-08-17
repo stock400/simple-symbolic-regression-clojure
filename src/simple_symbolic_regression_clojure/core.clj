@@ -1,4 +1,8 @@
-(ns simple-symbolic-regression-clojure.core)
+(ns simple-symbolic-regression-clojure.core
+  (:use [clojure.math.numeric-tower])
+  )
+
+;;; Interpreter
 
 (defn translate-op [op]
   "Translate operators from the symbolic regression language to
@@ -57,3 +61,15 @@
   (let [stack (run-script script bindings)
         answer (peek stack)]
     {:result answer, :stack stack}))
+
+;;; Rubrics
+
+(defrecord Rubric [input output])
+
+(def error-penalty 100000000000000000000N)
+
+(defn error-on [script rubric]
+  (if-let [result (:result (interpret script {}))]
+    (abs (- (:output rubric) result))
+    error-penalty))
+
