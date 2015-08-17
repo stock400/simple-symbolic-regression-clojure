@@ -66,6 +66,10 @@
 
 (defrecord Rubric [input output])
 
+(def error-penalty 100000000000000000000N)
+
 (defn error-on [script rubric]
-  (let [result (:result (interpret script {}))]
-    (abs (- (:output rubric) result))))
+  (if-let [result (:result (interpret script {}))]
+    (abs (- (:output rubric) result))
+    error-penalty))
+
