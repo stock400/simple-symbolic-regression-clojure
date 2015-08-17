@@ -52,3 +52,10 @@
 
 (defn set-score [individual score]
   (assoc individual :score score))
+
+(defn random-script
+  "Takes a collection of token-generators and a size, and samples the generators using
+  random-token to produce a vector of `size` samples."
+  [token-list size]
+  (repeatedly size #(random-token token-list))
+  )

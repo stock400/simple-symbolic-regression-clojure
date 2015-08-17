@@ -53,6 +53,14 @@
     (random-token []) => nil
   )
 
+;; random script
+
+(fact "random-script creates a vector of a given number of calls to random-tokens"
+  (let [stubby (cycler [9 :x])]
+    (with-redefs [random-token (fn [args] (step-cycler stubby))]
+      (random-script [1 2 3 4 5] 8) => [9 :x 9 :x 9 :x 9 :x]
+  )))
+
 ;; uniform crossover
 
 (fact "uniform crossover takes two collections and picks the value at each position with equal probability from each parent"
