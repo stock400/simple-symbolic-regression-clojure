@@ -157,4 +157,7 @@
       (let [script [1 2 3 + +]
             rubric (->Rubric 0 6)]
         (error-on script rubric) => 0)
+      (let [script [+ +]
+            rubric (->Rubric 0 6)]
+        (error-on script rubric) => error-penalty)
       )
