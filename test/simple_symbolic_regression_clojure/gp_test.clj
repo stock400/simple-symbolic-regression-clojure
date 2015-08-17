@@ -1,7 +1,6 @@
 (ns simple-symbolic-regression-clojure.gp-test
   (:use midje.sweet)
   (:use [simple-symbolic-regression-clojure.gp])
-  (:use (bigml.sampling [simple :as simple]))
   )
 
 ;; helpers for testing
@@ -20,21 +19,6 @@
   )))
 
 ;; a bit of exploration on how to test stochastic functions
-
-(fact "we can select a subsample of a collection using bigml.sampling"
-  (count (take 5 (simple/sample (range 1000)))) => 5
-  ; (take 5 (simple/sample (range 1000))) => [some collection of 5 numbers]
-  )
-
-(fact "but we can stub that by name"
-  (with-redefs [simple/sample (fn [s] (cycle [1 2]))]
-    (take 5 (simple/sample (range 1000))) => (just [1 2 1 2 1]))
-  )
- 
-(fact "we can stub core random number generation if we want to"
-  (with-redefs [rand-int (fn [arg] 88)]
-    [(rand-int 11) (rand-int 22) (rand-int 33)] => (just [88 88 88]))
-  )
 
 (fact "we can call step-cycler to produce a number from the cycler"
   (let [cc (cycler [-1 2 -3 4])]
@@ -112,5 +96,5 @@
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 2 2 2])
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [1 1 1 1 1 1 1 2 2 2 2 2 2 2 2])
       (one-point-crossover [1 1 1 1 1 1 1 1] [2 2 2 2 2 2 2 2]) => (just [2])
-      )) 
+      ))
   )
