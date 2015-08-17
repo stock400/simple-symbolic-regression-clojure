@@ -140,6 +140,8 @@
       (interpret [1 :x +] {:x 7, :y 9}) => {:result 8, :stack [8]}
       (interpret [:y :y / 111 :x + *] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
       )
+
+
 ;;; rubrics
 
 (fact "we can construct rubrics and access their components"

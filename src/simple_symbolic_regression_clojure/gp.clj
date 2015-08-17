@@ -59,3 +59,8 @@
   [token-list size]
   (repeatedly size #(random-token token-list))
   )
+
+(defn random-individual
+  "takes a token list and size, and returns an un-scored Individual"
+  [tokens size]
+  (make-individual (random-script tokens size)))
