@@ -32,17 +32,25 @@
 (defn binary-operator? [token]
   (contains? #{+ - * /} token))
 
-(defn process-token [stack token]
-  "Process given token returning the updated stack"
-  (cond
-   (number? token) (conj stack token)
-   (binary-operator? token) (process-binary-operator token stack)
-   :else stack)
-  )
+; We might consider throwing an exception in the :else
+; case instead of returning to help alert (human) programmers
+; of errors in things like bindings and undefined tokens.
+
+(defn process-token
+   "Process given token returning the updated stack"
+  ([stack token]
+   (process-token {} stack token))
+  ([bindings stack token]
+   (cond
+    (contains? bindings token) (conj stack (bindings token))
+    (number? token) (conj stack token)
+    (binary-operator? token) (process-binary-operator token stack)
+    :else stack)
+   ))
 
 (defn run-script [script bindings]
   "loop over every item in the script and modify the stack accordingly"
-  (reduce process-token [] script)
+  (reduce (partial process-token bindings) [] script)
   )
 
 (defn interpret [script bindings]

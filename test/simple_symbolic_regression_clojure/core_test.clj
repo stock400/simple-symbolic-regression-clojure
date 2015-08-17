@@ -80,6 +80,13 @@
              )
        )
 
+(facts "about process-token with a variable"
+       (fact "process-token with an undefined variable"
+             (process-token [3 4 7] :x) => [3 4 7])
+       (fact "process-token with a defined variable"
+             (process-token {:x 33, :y 47} [3 4 7] :x) => [3 4 7 33])
+       )
+
 ;; interpreter
 
 (fact "the interpreter does addition"
@@ -125,4 +132,9 @@
 (fact "the interpreter does mixed operation arithmetic"
       (interpret [1 2 3 4 5 * + / -] {}) => {:result 21/23, :stack [21/23]}
       (interpret [1 2 * 3 + 4 / 5 -] {}) => {:result -15/4, :stack [-15/4]}
+      )
+
+(fact "the interpreter handles bound variables"
+      (interpret [1 :x +] {:x 7, :y 9}) => {:result 8, :stack [8]}
+      (interpret [:y :y / 111 :x + *] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
       )
