@@ -7,15 +7,15 @@
 ;; helpers for testing
 
 (defn cycler
-  [numbers]
-  (atom {:step 0, :values (cycle numbers)})
+  [returns]
+  (atom (cycle returns))
   )
 
 (defn step-cycler
   [c]
-  (let [result (nth (:values @c) (:step @c))]
+  (let [result (first @c)]
     (do
-      (swap! c assoc :step (inc (:step @c)))
+      (swap! c rest)
       result
   )))
 
