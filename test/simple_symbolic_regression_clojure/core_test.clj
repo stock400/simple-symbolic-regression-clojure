@@ -194,3 +194,14 @@
                             (->Rubric {:x -1, :y 7} -1) (->Rubric {:x 3, :y -2} 4)]]
                (total-score-on script rubrics) => (+ 0 2 6 10)))
        )
+
+;; interpreter-wtf function
+
+(fact "we can see a string representation of a token with process-readably"
+  (process-readably ["1" "2"] "+") => ["(1+2)"]
+  (process-readably ["1" "2"] "88") => ["1" "2" "88"]
+  (process-readably ["1" "2"] "/") => ["(1/2)"]
+  (process-readably ["9" "(1+2)" "(1/2)"] "+") => ["9" "((1+2)+(1/2))"]
+  (process-readably [":x" "((1+2)+(1/2))"] "*") => ["(:x*((1+2)+(1/2)))"]
+  (process-readably [":x" "((1+2)+(1/2))"] ":y") => [":x" "((1+2)+(1/2))" ":y"]
+  )

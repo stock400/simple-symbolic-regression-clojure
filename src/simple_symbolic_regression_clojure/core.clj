@@ -1,5 +1,6 @@
 (ns simple-symbolic-regression-clojure.core
-  (:use [clojure.math.numeric-tower])
+  (:use [clojure.math.numeric-tower]
+  :require [clojure.string :as string])
   )
 
 ;;; Interpreter
@@ -61,6 +62,24 @@
   (let [stack (run-script script bindings)
         answer (peek stack)]
     {:result answer, :stack stack}))
+
+;; human-readable output
+
+(def ops ["+" "-" "*" "/"])
+
+(defn process-readably [stack word]
+  (cond
+    (some #{word} ops)
+      (if (> (count stack) 1)
+        (conj (pop (pop stack)) (str "(" (peek (pop stack)) word (peek stack) ")"))
+        stack)
+    :else (conj stack word)
+  ))
+
+(defn interpret-wtf [script bindings]
+  (let [words (reverse (string/split (str script) #" "))]
+    words
+  ))
 
 ;;; Rubrics
 
