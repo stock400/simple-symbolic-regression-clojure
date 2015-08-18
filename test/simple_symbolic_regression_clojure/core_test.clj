@@ -10,9 +10,10 @@
       (interpret [7] {}) => {:result 7, :stack [7]})
 
 (fact "process-token puts the token onto the stack if its a literal"
-      (process-token [] 8) => (just [8])
+      (process-token [] 8) => [8]
       (peek (process-token [1 2 3] 4)) => 4
-      (process-token [1 2 3] 4) => (just [1 2 3 4]))
+      (process-token [1 2 3] 4) => [1 2 3 4]
+      )
 
 (fact "run-script should process a list of literals by pushing them into the stack"
       (run-script [] {}) => []
