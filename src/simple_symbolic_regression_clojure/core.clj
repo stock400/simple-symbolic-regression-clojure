@@ -24,14 +24,18 @@
        (or (not (= op /))
            (legal-division-stack? stack))))
 
-(defn process-binary-operator [op stack]
+(def readable-ops {+ "+", - "-", * "*", / "÷"})
+
+(defn process-binary-operator [op stack & {:keys [wtf] :or {wtf false}}]
   "Apply a binary operator to the given stack, returning the updated stack"
   (if (legal-binary-op-stack? op stack)
     (let [arg2 (peek stack)
           arg1 (peek (pop stack))
           new-stack (pop (pop stack))]
-      (conj new-stack
-            ((translate-op op) arg1 arg2)))
+      (if wtf
+        (conj new-stack (str "(" arg1 (readable-ops op) arg2 ")"))
+        (conj new-stack ((translate-op op) arg1 arg2))
+        ))
     stack))
 
 (defn binary-operator? [token]
@@ -62,24 +66,6 @@
   (let [stack (run-script script bindings)
         answer (peek stack)]
     {:result answer, :stack stack}))
-
-;; human-readable output
-
-(def ops ["+" "-" "*" "/"])
-
-(defn process-readably [stack word]
-  (cond
-    (some #{word} ops)
-      (if (> (count stack) 1)
-        (conj (pop (pop stack)) (str "(" (peek (pop stack)) word (peek stack) ")"))
-        stack)
-    :else (conj stack word)
-  ))
-
-(defn interpret-wtf [script bindings]
-  (let [words (reverse (string/split (str script) #" "))]
-    words
-  ))
 
 ;;; Rubrics
 

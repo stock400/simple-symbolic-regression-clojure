@@ -195,13 +195,12 @@
                (total-score-on script rubrics) => (+ 0 2 6 10)))
        )
 
-;; interpreter-wtf function
+;; human-readable versions
 
-(fact "we can see a string representation of a token with process-readably"
-  (process-readably ["1" "2"] "+") => ["(1+2)"]
-  (process-readably ["1" "2"] "88") => ["1" "2" "88"]
-  (process-readably ["1" "2"] "/") => ["(1/2)"]
-  (process-readably ["9" "(1+2)" "(1/2)"] "+") => ["9" "((1+2)+(1/2))"]
-  (process-readably [":x" "((1+2)+(1/2))"] "*") => ["(:x*((1+2)+(1/2)))"]
-  (process-readably [":x" "((1+2)+(1/2))"] ":y") => [":x" "((1+2)+(1/2))" ":y"]
+(fact "we can see a string representation of a binary operation by passing in a flag"
+  (process-binary-operator + [1 2]) => [3]
+  (process-binary-operator + [1 2] :wtf true) => ["(1+2)"]
+  (process-binary-operator * [11 1 2] :wtf true) => [11 "(1*2)"]
   )
+
+  
