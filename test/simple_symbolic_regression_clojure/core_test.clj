@@ -172,8 +172,8 @@
                    rubric (->Rubric {:x 17} 5)]
                (score-on script rubric) => 14)
              (let [script [2 :x +]
-                   rubric (->Rubric {:x 7, :y 17} 5)]
-               (score-on script rubric) => 4)
+                   rubric (->Rubric {:x -7, :y 17} 5)]
+               (score-on script rubric) => 10)
              )
        )
 
@@ -182,12 +182,12 @@
              (let [script [2 4 +]
                    rubrics [(->Rubric {} 0) (->Rubric {} 1)
                             (->Rubric {} -1) (->Rubric {} 4)]]
-               (total-score-on script rubrics) => 20))
+               (total-score-on script rubrics) => (+ 6 5 7 2)))
        (fact "when the script has a single variable"
              (let [script [2 :x *]
                    rubrics [(->Rubric {:x 0} 0) (->Rubric {:x 1} 1)
                             (->Rubric {:x -1} -1) (->Rubric {:x 3} 4)]]
-               (total-score-on script rubrics) => 4))
+               (total-score-on script rubrics) => (+ 0 1 1 2)))
        (fact "when the script has a two variables"
              (let [script [:y :x *]
                    rubrics [(->Rubric {:x 0, :y 0} 0) (->Rubric {:x 1, :y -1} 1)
