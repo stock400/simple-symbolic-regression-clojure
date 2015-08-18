@@ -10,9 +10,10 @@
       (interpret [7] {}) => {:result 7, :stack [7]})
 
 (fact "process-token puts the token onto the stack if its a literal"
-      (process-token [] 8) => (just [8])
+      (process-token [] 8) => [8]
       (peek (process-token [1 2 3] 4)) => 4
-      (process-token [1 2 3] 4) => (just [1 2 3 4]))
+      (process-token [1 2 3] 4) => [1 2 3 4]
+      )
 
 (fact "run-script should process a list of literals by pushing them into the stack"
       (run-script [] {}) => []
@@ -139,6 +140,8 @@
       (interpret [1 :x +] {:x 7, :y 9}) => {:result 8, :stack [8]}
       (interpret [:y :y / 111 :x + *] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
       )
+
+
 ;;; rubrics
 
 (fact "we can construct rubrics and access their components"
