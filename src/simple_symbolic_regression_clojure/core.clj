@@ -66,10 +66,12 @@
 
 (defrecord Rubric [input output])
 
-(def error-penalty 100000000000000000000N)
+(def score-penalty 100000000000000000000N)
 
-(defn error-on [script rubric]
-  (if-let [result (:result (interpret script {}))]
+(defn score-on [script rubric]
+  (if-let [result (:result (interpret script (:input rubric)))]
     (abs (- (:output rubric) result))
-    error-penalty))
+    score-penalty))
 
+(defn total-score-on [script rubrics]
+  (reduce + (map (partial score-on script) rubrics)))

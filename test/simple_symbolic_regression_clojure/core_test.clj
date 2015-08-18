@@ -141,7 +141,6 @@
       (interpret [:y :y / 111 :x + *] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
       )
 
-
 ;;; rubrics
 
 (fact "we can construct rubrics and access their components"
@@ -150,17 +149,48 @@
         (:output rubric) => 2
         ))
 
-(fact "we can compute the error of a script on a rubric"
-      (let [script [2 4 +]
-            rubric (->Rubric 3 5)]
-        (error-on script rubric) => 1)
-      (let [script [4 20 -]
-            rubric (->Rubric 3 5)]
-        (error-on script rubric) => 21)
-      (let [script [1 2 3 + +]
-            rubric (->Rubric 0 6)]
-        (error-on script rubric) => 0)
-      (let [script [+ +]
-            rubric (->Rubric 0 6)]
-        (error-on script rubric) => error-penalty)
-      )
+(facts "we can compute the score of a script on a rubric"
+       (fact "when the script has a constant value"
+             (let [script [2 4 +]
+                   rubric (->Rubric {} 5)]
+               (score-on script rubric) => 1)
+             (let [script [4 20 -]
+                   rubric (->Rubric {} 5)]
+               (score-on script rubric) => 21)
+             (let [script [1 2 3 + +]
+                   rubric (->Rubric {} 6)]
+               (score-on script rubric) => 0)
+             (let [script [+ +]
+                   rubric (->Rubric {} 6)]
+               (score-on script rubric) => score-penalty)
+             )
+       (fact "when the script has a single variable"
+             (let [script [2 :x +]
+                   rubric (->Rubric {:x 7} 5)]
+               (score-on script rubric) => 4)
+             (let [script [2 :x +]
+                   rubric (->Rubric {:x 17} 5)]
+               (score-on script rubric) => 14)
+             (let [script [2 :x +]
+                   rubric (->Rubric {:x -7, :y 17} 5)]
+               (score-on script rubric) => 10)
+             )
+       )
+
+(facts "we can compute the score of a script on a collection of rubrics"
+       (fact "when the script has a constant value"
+             (let [script [2 4 +]
+                   rubrics [(->Rubric {} 0) (->Rubric {} 1)
+                            (->Rubric {} -1) (->Rubric {} 4)]]
+               (total-score-on script rubrics) => (+ 6 5 7 2)))
+       (fact "when the script has a single variable"
+             (let [script [2 :x *]
+                   rubrics [(->Rubric {:x 0} 0) (->Rubric {:x 1} 1)
+                            (->Rubric {:x -1} -1) (->Rubric {:x 3} 4)]]
+               (total-score-on script rubrics) => (+ 0 1 1 2)))
+       (fact "when the script has a two variables"
+             (let [script [:y :x *]
+                   rubrics [(->Rubric {:x 0, :y 0} 0) (->Rubric {:x 1, :y -1} 1)
+                            (->Rubric {:x -1, :y 7} -1) (->Rubric {:x 3, :y -2} 4)]]
+               (total-score-on script rubrics) => (+ 0 2 6 10)))
+       )

@@ -138,6 +138,6 @@
         ))
 
 (fact "can create a random individual (unscored)"
-      (into #{} (:script (random-individual ['(rand-int 7) :x + - * /] 1000))) => 
+      (into #{} (:script (random-individual ['(rand-int 7) :x + - * /] 1000))) =>
         #{0 1 2 3 4 5 6 :x + - * /}
       )
