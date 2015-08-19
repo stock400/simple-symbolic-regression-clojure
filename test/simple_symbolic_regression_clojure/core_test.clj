@@ -19,65 +19,65 @@
       (run-script [] {}) => []
       (run-script [1 2 3] {}) => [1 2 3])
 
-(facts "about process-token with +"
-       (fact "process-token with + and an empty stack"
-             (process-token [] +) => [])
-       (fact "process-token with + and only one number"
-             (process-token [7] +) => [7])
-       (fact "process-token with + and two numbers"
-             (process-token [3 5] +) => [8]
-             (process-token [1.2 -3.4] +) => [-2.2]
-             (process-token [2/3 5/6] +) => [3/2]
-             (process-token [0 0] +) => [0]
+(facts "about process-token with :+"
+       (fact "process-token with :+ and an empty stack"
+             (process-token [] :+) => [])
+       (fact "process-token with :+ and only one number"
+             (process-token [7] :+) => [7])
+       (fact "process-token with :+ and two numbers"
+             (process-token [3 5] :+) => [8]
+             (process-token [1.2 -3.4] :+) => [-2.2]
+             (process-token [2/3 5/6] :+) => [3/2]
+             (process-token [0 0] :+) => [0]
              )
        )
 
-(facts "about process-token with -"
-       (fact "process-token with - and an empty stack"
-             (process-token [] -) => [])
-       (fact "process-token with - and only one number"
-             (process-token [7] -) => [7])
-       (fact "process-token with - and two numbers"
-             (process-token [3 5] -) => [-2]
-             (process-token [1.2 -3.4] -) => [4.6]
-             (process-token [2/3 5/6] -) => [-1/6]
-             (process-token [0 0] -) => [0]
+(facts "about process-token with :-"
+       (fact "process-token with :- and an empty stack"
+             (process-token [] :-) => [])
+       (fact "process-token with :- and only one number"
+             (process-token [7] :-) => [7])
+       (fact "process-token with :- and two numbers"
+             (process-token [3 5] :-) => [-2]
+             (process-token [1.2 -3.4] :-) => [4.6]
+             (process-token [2/3 5/6] :-) => [-1/6]
+             (process-token [0 0] :-) => [0]
              )
        )
 
-(facts "about process-token with /"
-       (fact "process-token with / and an empty stack"
-             (process-token [] /) => [])
-       (fact "process-token with / and only one number"
-             (process-token [7] /) => [7])
-       (fact "process-token with / and two numbers"
-             (process-token [3 5] /) => [3/5]
-             (process-token [1.5 -0.5] /) => [-3.0]
-             (process-token [2/3 5/6] /) => [4/5]
+(facts "about process-token with :÷"
+       (fact "process-token with :÷ and an empty stack"
+             (process-token [] :÷) => [])
+       (fact "process-token with :÷ and only one number"
+             (process-token [7] :÷) => [7])
+       (fact "process-token with :÷ and two numbers"
+             (process-token [3 5] :÷) => [3/5]
+             (process-token [1.5 -0.5] :÷) => [-3.0]
+             (process-token [2/3 5/6] :÷) => [4/5]
              )
-       (fact "process-token with / and 0 as second argument"
-             (process-token [3 0] /) => [3 0]
-             (process-token [3 0.0] /) => [3 0.0]
-             (process-token [1/2 0/5] /) => [1/2 0]
-             (process-token [0.0 0.0] /) => [0.0 0.0]
+       (fact "process-token with :÷ and 0 as second argument"
+             (process-token [3 0] :÷) => [3 0]
+             (process-token [3 0.0] :÷) => [3 0.0]
+             (process-token [1/2 0/5] :÷) => [1/2 0]
+             (process-token [0.0 0.0] :÷) => [0.0 0.0]
              )
        )
 
-(facts "about process-token with *"
-       (fact "process-token with * and an empty stack"
-             (process-token [] *) => [])
-       (fact "process-token with * and only one number"
-             (process-token [7] *) => [7])
-       (fact "process-token with * and two numbers"
-             (process-token [3 5] *) => [15]
-             (process-token [1.2 -3.4] *) => [-4.08]
-             (process-token [2/3 5/6] *) => [5/9]
-             (process-token [0 0] *) => [0]
+(facts "about process-token with :*"
+       (fact "process-token with :* and an empty stack"
+             (process-token [] :*) => [])
+       (fact "process-token with :* and only one number"
+             (process-token [7] :*) => [7])
+       (fact "process-token with :* and two numbers"
+             (process-token [3 5] :*) => [15]
+             (process-token [1.2 -3.4] :*) => [-4.08]
+             (process-token [2/3 5/6] :*) => [5/9]
+             (process-token [0 0] :*) => [0]
              )
-       (fact "process-token with * and really large arguments"
-             (process-token [1111111111111 22222222222222222222222222222] *)
+       (fact "process-token with :* and really large arguments"
+             (process-token [1111111111111 22222222222222222222222222222] :*)
                => [24691358024688888888888888888641975308642N]
-             (process-token [111111 22222222222222222] *)
+             (process-token [111111 22222222222222222] :*)
                => [2469133333333333308642N]
              )
        )
@@ -92,53 +92,53 @@
 ;; interpreter
 
 (fact "the interpreter does addition"
-      (interpret [1 2 +] {}) => {:result 3, :stack [3]}
-      (interpret [1 +] {}) => {:result 1, :stack [1]}
-      (interpret [+] {}) => {:result nil, :stack []}
-      (interpret [1 2 3 4 +] {}) => {:result 7, :stack [1 2 7]}
-      (interpret [1 2 3 + 4 5 7 +] {}) => {:result 12, :stack [1 5 4 12]}
-      (interpret [1 2 3 4 5 + + +] {}) => {:result 14, :stack [1 14]}
+      (interpret [1 2 :+] {}) => {:result 3, :stack [3]}
+      (interpret [1 :+] {}) => {:result 1, :stack [1]}
+      (interpret [:+] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 :+] {}) => {:result 7, :stack [1 2 7]}
+      (interpret [1 2 3 :+ 4 5 7 :+] {}) => {:result 12, :stack [1 5 4 12]}
+      (interpret [1 2 3 4 5 :+ :+ :+] {}) => {:result 14, :stack [1 14]}
       )
 
 (fact "the interpreter does subtraction"
-      (interpret [1 2 -] {}) => {:result -1, :stack [-1]}
-      (interpret [1 -] {}) => {:result 1, :stack [1]}
-      (interpret [-] {}) => {:result nil, :stack []}
-      (interpret [1 2 3 4 -] {}) => {:result -1, :stack [1 2 -1]}
-      (interpret [1 2 3 - 4 5 7 -] {}) => {:result -2, :stack [1 -1 4 -2]}
-      (interpret [1 2 3 4 5 - - -] {}) => {:result -2, :stack [1 -2]}
+      (interpret [1 2 :-] {}) => {:result -1, :stack [-1]}
+      (interpret [1 :-] {}) => {:result 1, :stack [1]}
+      (interpret [:-] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 :-] {}) => {:result -1, :stack [1 2 -1]}
+      (interpret [1 2 3 :- 4 5 7 :-] {}) => {:result -2, :stack [1 -1 4 -2]}
+      (interpret [1 2 3 4 5 :- :- :-] {}) => {:result -2, :stack [1 -2]}
       )
 
 (fact "the interpreter does division"
-      (interpret [1 2 /] {}) => {:result 1/2, :stack [1/2]}
-      (interpret [6.5 0.125 /] {}) => {:result 52.0, :stack [52.0]}
-      (interpret [1 /] {}) => {:result 1, :stack [1]}
-      (interpret [/] {}) => {:result nil, :stack []}
-      (interpret [1 2 3 4 /] {}) => {:result 3/4, :stack [1 2 3/4]}
-      (interpret [1 2 3 / 4 5 7 /] {}) => {:result 5/7, :stack [1 2/3 4 5/7]}
-      (interpret [1 2 3 4 5 / / /] {}) => {:result (/ 2 (/ 3 (/ 4 5))),
+      (interpret [1 2 :÷] {}) => {:result 1/2, :stack [1/2]}
+      (interpret [6.5 0.125 :÷] {}) => {:result 52.0, :stack [52.0]}
+      (interpret [1 :÷] {}) => {:result 1, :stack [1]}
+      (interpret [:÷] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 :÷] {}) => {:result 3/4, :stack [1 2 3/4]}
+      (interpret [1 2 3 :÷ 4 5 7 :÷] {}) => {:result 5/7, :stack [1 2/3 4 5/7]}
+      (interpret [1 2 3 4 5 :÷ :÷ :÷] {}) => {:result (/ 2 (/ 3 (/ 4 5))),
                                            :stack [1 (/ 2 (/ 3 (/ 4 5)))]}
-      (interpret [1.0 2.0 3.0 4.0 5.0 / / /] {}) => {:result (/ 2.0 (/ 3.0 (/ 4.0 5.0))),
+      (interpret [1.0 2.0 3.0 4.0 5.0 :÷ :÷ :÷] {}) => {:result (/ 2.0 (/ 3.0 (/ 4.0 5.0))),
                                                      :stack [1.0 (/ 2.0 (/ 3.0 (/ 4.0 5.0)))]}
       )
 
 (fact "the interpreter does multiplication"
-      (interpret [3 2 *] {}) => {:result 6, :stack [6]}
-      (interpret [3 *] {}) => {:result 3, :stack [3]}
-      (interpret [*] {}) => {:result nil, :stack []}
-      (interpret [1 2 3 4 *] {}) => {:result 12, :stack [1 2 12]}
-      (interpret [1 2 3 * 4 5 7 *] {}) => {:result 35, :stack [1 6 4 35]}
-      (interpret [1 2 3 4 5 * * *] {}) => {:result 120, :stack [1 120]}
+      (interpret [3 2 :*] {}) => {:result 6, :stack [6]}
+      (interpret [3 :*] {}) => {:result 3, :stack [3]}
+      (interpret [:*] {}) => {:result nil, :stack []}
+      (interpret [1 2 3 4 :*] {}) => {:result 12, :stack [1 2 12]}
+      (interpret [1 2 3 :* 4 5 7 :*] {}) => {:result 35, :stack [1 6 4 35]}
+      (interpret [1 2 3 4 5 :* :* :*] {}) => {:result 120, :stack [1 120]}
       )
 
 (fact "the interpreter does mixed operation arithmetic"
-      (interpret [1 2 3 4 5 * + / -] {}) => {:result 21/23, :stack [21/23]}
-      (interpret [1 2 * 3 + 4 / 5 -] {}) => {:result -15/4, :stack [-15/4]}
+      (interpret [1 2 3 4 5 :* :+ :÷ :-] {}) => {:result 21/23, :stack [21/23]}
+      (interpret [1 2 :* 3 :+ 4 :÷ 5 :-] {}) => {:result -15/4, :stack [-15/4]}
       )
 
 (fact "the interpreter handles bound variables"
-      (interpret [1 :x +] {:x 7, :y 9}) => {:result 8, :stack [8]}
-      (interpret [:y :y / 111 :x + *] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
+      (interpret [1 :x :+] {:x 7, :y 9}) => {:result 8, :stack [8]}
+      (interpret [:y :y :÷ 111 :x :+ :*] {:x 7/4, :y 9.5}) => {:result 112.75, :stack [112.75]}
       )
 
 ;;; rubrics
@@ -151,27 +151,27 @@
 
 (facts "we can compute the score of a script on a rubric"
        (fact "when the script has a constant value"
-             (let [script [2 4 +]
+             (let [script [2 4 :+]
                    rubric (->Rubric {} 5)]
                (score-on script rubric) => 1)
-             (let [script [4 20 -]
+             (let [script [4 20 :-]
                    rubric (->Rubric {} 5)]
                (score-on script rubric) => 21)
-             (let [script [1 2 3 + +]
+             (let [script [1 2 3 :+ :+]
                    rubric (->Rubric {} 6)]
                (score-on script rubric) => 0)
-             (let [script [+ +]
+             (let [script [:+ :+]
                    rubric (->Rubric {} 6)]
                (score-on script rubric) => score-penalty)
              )
        (fact "when the script has a single variable"
-             (let [script [2 :x +]
+             (let [script [2 :x :+]
                    rubric (->Rubric {:x 7} 5)]
                (score-on script rubric) => 4)
-             (let [script [2 :x +]
+             (let [script [2 :x :+]
                    rubric (->Rubric {:x 17} 5)]
                (score-on script rubric) => 14)
-             (let [script [2 :x +]
+             (let [script [2 :x :+]
                    rubric (->Rubric {:x -7, :y 17} 5)]
                (score-on script rubric) => 10)
              )
@@ -179,17 +179,17 @@
 
 (facts "we can compute the score of a script on a collection of rubrics"
        (fact "when the script has a constant value"
-             (let [script [2 4 +]
+             (let [script [2 4 :+]
                    rubrics [(->Rubric {} 0) (->Rubric {} 1)
                             (->Rubric {} -1) (->Rubric {} 4)]]
                (total-score-on script rubrics) => (+ 6 5 7 2)))
        (fact "when the script has a single variable"
-             (let [script [2 :x *]
+             (let [script [2 :x :*]
                    rubrics [(->Rubric {:x 0} 0) (->Rubric {:x 1} 1)
                             (->Rubric {:x -1} -1) (->Rubric {:x 3} 4)]]
                (total-score-on script rubrics) => (+ 0 1 1 2)))
        (fact "when the script has a two variables"
-             (let [script [:y :x *]
+             (let [script [:y :x :*]
                    rubrics [(->Rubric {:x 0, :y 0} 0) (->Rubric {:x 1, :y -1} 1)
                             (->Rubric {:x -1, :y 7} -1) (->Rubric {:x 3, :y -2} 4)]]
                (total-score-on script rubrics) => (+ 0 2 6 10)))

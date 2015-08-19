@@ -10,9 +10,10 @@
    here is replacing +, -, and * with +', -', and *' so we don't
    have unexpected overflow exceptions."
   (condp = op
-    + +'
-    - -'
-    * *'
+    :+ +'
+    :- -'
+    :* *'
+    :÷ /
     op))
 
 (defn legal-division-stack? [stack]
@@ -20,7 +21,7 @@
 
 (defn legal-binary-op-stack? [op stack]
   (and (>= (count stack) 2)
-       (or (not (= op /))
+       (or (not (= op :÷))
            (legal-division-stack? stack))))
 
 (defn process-binary-operator [op stack]
@@ -34,7 +35,7 @@
     stack))
 
 (defn binary-operator? [token]
-  (contains? #{+ - * /} token))
+  (contains? #{:+ :- :* :÷} token))
 
 ; We might consider throwing an exception in the :else
 ; case instead of returning to help alert (human) programmers
