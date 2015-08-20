@@ -50,11 +50,15 @@
   ([script]
    (make-individual script nil))
   ([script score]
-   (->Individual script score)))
+   (->Individual script (atom score))))
 
 
 (defn set-score [individual score]
-  (assoc individual :score score))
+  (swap! (:score individual) (fn [_] score)))
+
+
+(defn get-score [individual]
+  @(:score individual))
 
 
 (defn random-script
@@ -76,7 +80,7 @@
   a list containing all the Individuals with the lowest non-nil score;
   if no Individual has been scored, it returns an empty list"
   [individuals]
-  (let [scored-ones (filter #(some? (:score %)) individuals)
-        best (:score (first (sort-by :score scored-ones)))]
-    (filter #(= best (:score %)) scored-ones)
+  (let [scored-ones (filter #(some? (get-score %)) individuals)
+        sorted (sort-by get-score scored-ones)]
+    (first (partition-by get-score sorted))
   ))
