@@ -194,3 +194,4 @@
                             (->Rubric {:x -1, :y 7} -1) (->Rubric {:x 3, :y -2} 4)]]
                (total-score-on script rubrics) => (+ 0 2 6 10)))
        )
+

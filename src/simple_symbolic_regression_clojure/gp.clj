@@ -72,8 +72,9 @@
 
 
 (defn winners
-  "takes a list of Individuals, scored, and returns the one with the lowest non-nil score;
-  if no Individual has been scored, returns an empty list"
+  "takes a list of Individuals, scored, and returns
+  a list containing all the Individuals with the lowest non-nil score;
+  if no Individual has been scored, it returns an empty list"
   [individuals]
   (let [scored-ones (filter #(some? (:score %)) individuals)
         best (:score (first (sort-by :score scored-ones)))]

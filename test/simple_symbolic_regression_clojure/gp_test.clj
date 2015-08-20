@@ -175,3 +175,17 @@
                (make-individual [2] nil)]]
     (count (winners dudes)) => 0
   ))
+
+
+;; exploratory
+
+(def population 
+  (atom (into #{} 
+    (repeatedly 10 
+      #(make-individual (random-script ['(rand-int 100) '(rand) '(rand-int 1000) '(rand-int 10) :+ :- :* :÷ :x] 10) nil))
+    )))
+
+; (def x-plus-6-rubrics 
+;   (repeatedly 20 #(let [x (rand-int 100)] (Rubric. {:x x} (+ 6 x)))))
+
+; (println x-plus-6-rubrics)
