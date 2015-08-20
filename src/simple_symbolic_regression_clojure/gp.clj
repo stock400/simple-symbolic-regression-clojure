@@ -19,8 +19,8 @@
   )
 
 (defn uniform-mutation
-  "Takes a collections, a vector of tokens (including functions), and a probability;
-  resamples eachposition with i.i.d. probability, using the token list to replace them.
+  "Takes a collection, a vector of tokens (including functions), and a probability;
+  resamples each position with i.i.d. probability, using the token list to replace them.
   The result will not change length."
   [mom tokens prob]
   (map
