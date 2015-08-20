@@ -141,3 +141,39 @@
       (into #{} (:script (random-individual ['(rand-int 7) :x + - * /] 1000))) =>
         #{0 1 2 3 4 5 6 :x + - * /}
       )
+
+;; selection
+
+(fact "given a set of Individuals, with unique scores, I can return the lowest-scoring one"
+  (let [dudes [(make-individual [1] 12) 
+               (make-individual [2] 2)
+               (make-individual [2] 1)]]
+    (count (winners dudes)) => 1
+    (:score (first (winners dudes))) => 1
+  ))
+
+(fact "given a set of Individuals, I can return all the lowest-scoring ones"
+  (let [dudes [(make-individual [1] 1) 
+               (make-individual [2] 200)
+               (make-individual [3] 1)
+               (make-individual [4] 1)]]
+    (count (winners dudes)) => 3
+    (sort (map :script (winners dudes))) => [[1] [3] [4]]
+  ))
+
+(fact "given a set of Individuals, some without scores, I will not return the scoreless ones"
+  (let [dudes [(make-individual [1] nil) 
+               (make-individual [2] 2)
+               (make-individual [2] 1)]]
+    (count (winners dudes)) => 1
+    (:score (first (winners dudes))) => 1
+  ))
+
+(fact "given a set of Individuals, none with scores, I will return an empty list"
+  (let [dudes [(make-individual [1] nil) 
+               (make-individual [2] nil)
+               (make-individual [2] nil)]]
+    (count (winners dudes)) => 0
+  ))
+
+

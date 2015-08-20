@@ -42,7 +42,9 @@
     (concat (take mom-cut mom) (drop dad-cut dad))
   ))
 
+
 (defrecord Individual [script score])
+
 
 (defn make-individual
   ([script]
@@ -50,8 +52,10 @@
   ([script score]
    (->Individual script score)))
 
+
 (defn set-score [individual score]
   (assoc individual :score score))
+
 
 (defn random-script
   "Takes a collection of token-generators and a size, and samples the generators using
@@ -60,7 +64,19 @@
   (repeatedly size #(random-token token-list))
   )
 
+
 (defn random-individual
   "takes a token list and size, and returns an un-scored Individual"
   [tokens size]
   (make-individual (random-script tokens size)))
+
+
+(defn winners
+  "takes a list of Individuals, scored, and returns
+  a list containing all the Individuals with the lowest non-nil score;
+  if no Individual has been scored, it returns an empty list"
+  [individuals]
+  (let [scored-ones (filter #(some? (:score %)) individuals)
+        best (:score (first (sort-by :score scored-ones)))]
+    (filter #(= best (:score %)) scored-ones)
+  ))
