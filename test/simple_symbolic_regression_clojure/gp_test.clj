@@ -44,9 +44,9 @@
 
 (fact "random-token produces a random token, including ERCs if told to"
     (random-token [1]) => 1
-    (into #{} (repeatedly 100 #(random-token [1 2 3 4]))) => #{1 2 3 4}
-    (into #{} (repeatedly 100 #(random-token ['(rand-int 5)]))) => #{0 1 2 3 4}
-    (into #{} (repeatedly 100 #(random-token [:x :+ '(rand-int 5)]))) => #{0 1 2 3 4 :x :+}
+    (into #{} (repeatedly 1000 #(random-token [1 2 3 4]))) => #{1 2 3 4}
+    (into #{} (repeatedly 1000 #(random-token ['(rand-int 5)]))) => #{0 1 2 3 4}
+    (into #{} (repeatedly 1000 #(random-token [:x :+ '(rand-int 5)]))) => #{0 1 2 3 4 :x :+}
   )
 
 (fact "random-token returns nil when passed an empty collection"
@@ -177,3 +177,19 @@
   ))
 
 
+;; Populations & Search
+
+;; y=sin(x)
+;; population of ~1000
+;; training cases: ~100
+;; initial size: ~20
+;; mutation + crossover
+
+(fact "we can calculate a sin(x)"
+  (Math/sin 0.0) => 0.0
+  (Math/sin (/ Math/PI 2)) => 1.0
+  (Math/sin Math/PI) => (roughly 0.0 0.001)
+  )
+
+(fact "it happens"
+  )
