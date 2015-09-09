@@ -198,9 +198,13 @@
   (repeatedly pop-size constructor-fn))
 
 
+(def token-generator
+  [#(rand-int 100) :x :+ :- :* :÷])
+
+
 (fact "we can make a population of random individuals"
-  (let [dude (fn [] (random-individual [#(rand-int 100) :x :+ :- :* :÷] 20))]
-    (count (random-population 100 dude)) => 100))
+  (let [random-dude (fn [] (random-individual token-generator 20))]
+    (count (random-population 100 random-dude)) => 100))
 
 
 (def sine-rubrics
@@ -215,9 +219,9 @@
 
 
 (fact "we can score an Individual with a Rubric (or set)"
-  (let [dude (random-individual ['(rand-int 100) :x :+ :- :* :÷] 20)]
-    (:score dude) => nil
-    (> (:score (score-using-rubrics dude sine-rubrics)) 0) => true
+  (let [random-dude (fn [] (random-individual token-generator 20))]
+    (:score (random-dude)) => nil
+    (> (:score (score-using-rubrics (random-dude) sine-rubrics)) 0) => true
     ))
 
 
@@ -228,9 +232,21 @@
 
 
 (fact "we can score a whole population with `score-population`"
-  (let [dude (fn [] (random-individual [#(rand-int 100) :x :+ :- :* :÷] 20))]
-    (apply min (map :score (score-population (random-population 100 dude) sine-rubrics)))) => 100)
+  (let [random-dude (fn [] (random-individual token-generator 20))]
+    (not-any? nil? 
+      (map 
+        :score 
+        (score-population (random-population 100 random-dude)
+          sine-rubrics)))) => true)
 
+
+(defn new-babies
+  "produce `n` new Individuals by applying `operator` to `population` given `token-generator`"
+  [n operator population token-generator]
+  )
+
+; (fact "we can produce a pile of new babies from a population"
+;   (new-babies ))
 
 ; (defn population-step
 ;   []
