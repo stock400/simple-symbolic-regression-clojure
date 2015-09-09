@@ -2,6 +2,19 @@
 
 A simple Clojure implementation of a genetic programming symbolic regression system. This is essentially a serial (non-parallel, non-distributed) implementation of a very simple GP system that students can use as a starting point for creating parallel or distributed implementations. To keep things simple, we're (at least initially) _only_ focusing on parallelizing the evaluation of individual scripts, and not worrying about adding concurrency to things like selection, crossover, and building new populations.
 
+## How to use it
+
+Build a collection of `Rubric` items for your training dataset. For example, here's a set of rubrics `sine-rubrics` that contains 10 randomly-sampled `x`  values and maps them to the sine of `x`:
+
+~~~ clojure
+(def sine-rubrics
+  (repeatedly 10 
+    #(let [x (rand (* 2 Math/PI))]
+      (->Rubric {:x x} (Math/sin x)))))
+~~~
+
+The first argument of the `->Rubric` constructor should be a map containing as its key the variable name `:x` _as such_... at least if your symbolic regression setup also is to include a variable `:x`. 
+
 ## To-dos
 
  * Write the interpreter

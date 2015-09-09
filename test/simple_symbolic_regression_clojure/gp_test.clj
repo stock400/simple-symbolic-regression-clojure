@@ -1,6 +1,7 @@
 (ns simple-symbolic-regression-clojure.gp-test
   (:use midje.sweet)
-  (:use [simple-symbolic-regression-clojure.gp])
+  (:use [simple-symbolic-regression-clojure.gp]
+        [simple-symbolic-regression-clojure.core])
   )
 
 ;; helpers for testing
@@ -110,17 +111,17 @@
 
 (facts "can construct an Individual and access its script and score"
        (fact "works with non-nil scores"
-             (let [script [:x :y +]
+             (let [script [:x :y :+]
                    individual (make-individual script 12)]
                (:script individual) => script
                (:score individual) => 12))
        (fact "works with nil score"
-             (let [script [:x :y +]
+             (let [script [:x :y :+]
                    individual (make-individual script nil)]
                (:script individual) => script
                (:score individual) => nil))
        (fact "works with no score given"
-             (let [script [:x :y +]
+             (let [script [:x :y :+]
                    individual (make-individual script)]
                (:script individual) => script
                (:score individual) => nil))
@@ -138,8 +139,8 @@
         ))
 
 (fact "can create a random individual (unscored)"
-      (into #{} (:script (random-individual ['(rand-int 7) :x + - * /] 1000))) =>
-        #{0 1 2 3 4 5 6 :x + - * /}
+      (into #{} (:script (random-individual ['(rand-int 7) :x :+ :- :* :÷] 1000))) =>
+        #{0 1 2 3 4 5 6 :x :+ :- :* :÷}
       )
 
 ;; selection
@@ -185,11 +186,56 @@
 ;; initial size: ~20
 ;; mutation + crossover
 
+
 (fact "we can calculate a sin(x)"
   (Math/sin 0.0) => 0.0
   (Math/sin (/ Math/PI 2)) => 1.0
-  (Math/sin Math/PI) => (roughly 0.0 0.001)
-  )
+  (Math/sin Math/PI) => (roughly 0.0 0.001))
+
+
+(defn random-population
+  [pop-size constructor-fn]
+  (repeatedly pop-size constructor-fn))
+
+
+(fact "we can make a population of random individuals"
+  (let [dude (fn [] (random-individual [#(rand-int 100) :x :+ :- :* :÷] 20))]
+    (count (random-population 100 dude)) => 100))
+
+
+(def sine-rubrics
+  (repeatedly 10 
+    #(let [x (rand (* 2 Math/PI))]
+      (->Rubric {:x x} (Math/sin x)))))
+
+
+(fact "sine-rubrics contain the numerical values I imagine they should"
+  (count sine-rubrics) => 10
+  (map #(Math/sin (get-in % [:input :x])) sine-rubrics) => (map :output sine-rubrics))
+
+
+(fact "we can score a random Individual with those rubrics"
+  (let [dude (fn [] (random-individual ['(rand-int 100) :x :+ :- :* :÷] 20))
+        script (:script (dude))
+        rubric (first sine-rubrics)]
+    (count script) => 20
+    (> (total-score-on script sine-rubrics) 0) => truthy ;; some arbitrary positive number
+    ))
+
+
+; (defn population-step
+;   []
+;   ...)
+
+
+
+; (defn future-history
+;   [init-pop]
+;   (iterate population-step init-pop))
+
+
+; (def run (take 10 (future-history (random-population 1000 dude))))
+
 
 (fact "it happens"
   )
