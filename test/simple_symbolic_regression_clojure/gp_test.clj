@@ -214,13 +214,22 @@
   (map #(Math/sin (get-in % [:input :x])) sine-rubrics) => (map :output sine-rubrics))
 
 
-(fact "we can score a random Individual with those rubrics"
-  (let [dude (fn [] (random-individual ['(rand-int 100) :x :+ :- :* :÷] 20))
-        script (:script (dude))
-        rubric (first sine-rubrics)]
-    (count script) => 20
-    (> (total-score-on script sine-rubrics) 0) => truthy ;; some arbitrary positive number
+(fact "we can score an Individual with a Rubric (or set)"
+  (let [dude (random-individual ['(rand-int 100) :x :+ :- :* :÷] 20)]
+    (:score dude) => nil
+    (> (:score (score-using-rubrics dude sine-rubrics)) 0) => true
     ))
+
+
+(defn score-population
+  "takes an unscored population and returns the same ones with scores assigned"
+  [population rubrics]
+  (map #(score-using-rubrics % rubrics) population))
+
+
+(fact "we can score a whole population with `score-population`"
+  (let [dude (fn [] (random-individual [#(rand-int 100) :x :+ :- :* :÷] 20))]
+    (apply min (map :score (score-population (random-population 100 dude) sine-rubrics)))) => 100)
 
 
 ; (defn population-step

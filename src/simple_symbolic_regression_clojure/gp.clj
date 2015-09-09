@@ -1,4 +1,5 @@
 (ns simple-symbolic-regression-clojure.gp
+   (:use [simple-symbolic-regression-clojure.core])
   )
 
 (defn random-token
@@ -56,6 +57,12 @@
 (defn set-score [individual score]
   (assoc individual :score score))
 
+
+(defn score-using-rubrics
+  "assigns the :score value of an Individual by invoking `total-score-on` a set of Rubrics"
+  [individual rubrics]
+  (set-score individual (total-score-on (:script individual) rubrics))
+  )
 
 (defn random-script
   "Takes a collection of token-generators and a size, and samples the generators using
