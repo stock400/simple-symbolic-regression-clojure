@@ -208,13 +208,13 @@
 
 
 (def sine-rubrics
-  (repeatedly 10 
+  (repeatedly 32 
     #(let [x (rand (* 2 Math/PI))]
       (->Rubric {:x x} (Math/sin x)))))
 
 
 (fact "sine-rubrics contain the numerical values I imagine they should"
-  (count sine-rubrics) => 10
+  (count sine-rubrics) => 32
   (map #(Math/sin (get-in % [:input :x])) sine-rubrics) => (map :output sine-rubrics))
 
 
@@ -290,6 +290,6 @@
   (iterate #(one-seasonal-cycle % mutation-rate rubrics) initial-pop))
 
 
-(println (first (sort-by
-            :score
-            (nth (future-history initial-sine-population 0.05 sine-rubrics) 10))))
+(println (map
+          winners 
+          (take 10 (future-history initial-sine-population 0.05 sine-rubrics))))
