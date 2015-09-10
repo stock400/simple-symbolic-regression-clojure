@@ -290,6 +290,6 @@
   (iterate #(one-seasonal-cycle % mutation-rate rubrics) initial-pop))
 
 
-(println (sort-by
+(println (first (sort-by
             :score
-            (nth (future-history initial-sine-population 0.05 sine-rubrics) 50)))
+            (nth (future-history initial-sine-population 0.05 sine-rubrics) 10))))
