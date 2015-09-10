@@ -199,7 +199,7 @@
 
 
 (def token-generator
-  [#(rand-int 100) :x :+ :- :* :÷])
+  ['(rand-int 100) :x :+ :- :* :÷])
 
 
 (fact "we can make a population of random individuals"
@@ -240,27 +240,56 @@
           sine-rubrics)))) => true)
 
 
-(defn new-babies
-  "produce `n` new Individuals by applying `operator` to `population` given `token-generator`"
-  [n operator population token-generator]
-  )
-
-; (fact "we can produce a pile of new babies from a population"
-;   (new-babies ))
-
-; (defn population-step
-;   []
-;   ...)
-
+(defn make-baby
+  "creates a new scored Individual by sampling a population (with uniform probability) and applying one-pt crossover and mutation, then scoring with the rubrics"
+  [population mutation-rate rubrics]
+  (let [mom (:script (rand-nth population))
+        dad (:script (rand-nth population))
+        baby-script (uniform-mutation
+                      (one-point-crossover mom dad)
+                      token-generator
+                      mutation-rate)]
+    (make-individual baby-script (total-score-on baby-script rubrics))))
 
 
-; (defn future-history
-;   [init-pop]
-;   (iterate population-step init-pop))
+(fact "`make-baby` produces a new scored Individual"
+  (let [random-dude (fn [] (random-individual token-generator 100))
+        population (score-population
+                    (random-population 10 random-dude)
+                    sine-rubrics)]
+    (> (count (:script (make-baby population 0.01 sine-rubrics))) 0)  => true
+    (nil? (:score (make-baby population 0.01 sine-rubrics))) => false
+  ))
 
 
-; (def run (take 10 (future-history (random-population 1000 dude))))
+(defn one-seasonal-cycle
+  "doubles the population size by calling `make-baby`, sorts the entire population by score (worse is bigger), removes the worst-scoring ones"
+  [population mutation-rate rubrics]
+  (let [carrying-capacity (count population)
+        new-brood (repeatedly
+                    carrying-capacity
+                    #(make-baby population mutation-rate rubrics))]
+    (take carrying-capacity (sort-by :score (concat population new-brood)))
+    ))
 
 
-(fact "it happens"
-  )
+(def random-sine-guess (fn [] (random-individual token-generator 100)))
+
+
+(def initial-sine-population
+  (score-population (random-population 200 random-sine-guess) sine-rubrics))
+
+
+; (println (sort-by :score initial-sine-population))
+
+; (println (sort-by :score (one-seasonal-cycle initial-sine-population 0.01 sine-rubrics)))
+
+(defn future-history
+  "creates a lazy list of iterations by applying `one-seasonal-cycle` to an initial population"
+  [initial-pop mutation-rate rubrics]
+  (iterate #(one-seasonal-cycle % mutation-rate rubrics) initial-pop))
+
+
+(println (sort-by
+            :score
+            (nth (future-history initial-sine-population 0.05 sine-rubrics) 50)))
