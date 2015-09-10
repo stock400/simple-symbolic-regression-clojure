@@ -245,10 +245,18 @@
   [population mutation-rate rubrics]
   (let [mom (:script (rand-nth population))
         dad (:script (rand-nth population))
-        baby-script (uniform-mutation
+        baby1-script (uniform-mutation
                       (one-point-crossover mom dad)
                       token-generator
-                      mutation-rate)]
+                      mutation-rate)
+        baby2-script (uniform-mutation
+                      (uniform-crossover mom dad)
+                      token-generator
+                      mutation-rate)
+        baby-script (if 
+                      (< (rand-int 20) 10)
+                      baby1-script
+                      baby2-script)]
     (make-individual baby-script (total-score-on baby-script rubrics))))
 
 
@@ -277,7 +285,7 @@
 
 
 (def initial-sine-population
-  (score-population (random-population 200 random-sine-guess) sine-rubrics))
+  (score-population (random-population 500 random-sine-guess) sine-rubrics))
 
 
 ; (println (sort-by :score initial-sine-population))
