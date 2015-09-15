@@ -114,17 +114,17 @@
              (let [script [:x :y :+]
                    individual (make-individual script 12)]
                (:script individual) => script
-               (:score individual) => 12))
+               (get-score individual) => 12))
        (fact "works with nil score"
              (let [script [:x :y :+]
                    individual (make-individual script nil)]
                (:script individual) => script
-               (:score individual) => nil))
+               (get-score individual) => nil))
        (fact "works with no score given"
              (let [script [:x :y :+]
                    individual (make-individual script)]
                (:script individual) => script
-               (:score individual) => nil))
+               (get-score individual) => nil))
        )
 
 (fact "can set the score of an individual"
@@ -133,9 +133,9 @@
             individual (make-individual script)
             scored-individual (set-score individual score)]
         (:script individual) => script
-        (:score individual) => nil
+        (get-score individual) => nil
         (:script scored-individual) => script
-        (:score scored-individual) => score
+        (get-score scored-individual) => score
         ))
 
 (fact "can create a random individual (unscored)"
@@ -146,15 +146,15 @@
 ;; selection
 
 (fact "given a set of Individuals, with unique scores, I can return the lowest-scoring one"
-  (let [dudes [(make-individual [1] 12) 
+  (let [dudes [(make-individual [1] 12)
                (make-individual [2] 2)
                (make-individual [2] 1)]]
     (count (winners dudes)) => 1
-    (:score (first (winners dudes))) => 1
+    (get-score (first (winners dudes))) => 1
   ))
 
 (fact "given a set of Individuals, I can return all the lowest-scoring ones"
-  (let [dudes [(make-individual [1] 1) 
+  (let [dudes [(make-individual [1] 1)
                (make-individual [2] 200)
                (make-individual [3] 1)
                (make-individual [4] 1)]]
@@ -163,15 +163,15 @@
   ))
 
 (fact "given a set of Individuals, some without scores, I will not return the scoreless ones"
-  (let [dudes [(make-individual [1] nil) 
+  (let [dudes [(make-individual [1] nil)
                (make-individual [2] 2)
                (make-individual [2] 1)]]
     (count (winners dudes)) => 1
-    (:score (first (winners dudes))) => 1
+    (get-score (first (winners dudes))) => 1
   ))
 
 (fact "given a set of Individuals, none with scores, I will return an empty list"
-  (let [dudes [(make-individual [1] nil) 
+  (let [dudes [(make-individual [1] nil)
                (make-individual [2] nil)
                (make-individual [2] nil)]]
     (count (winners dudes)) => 0
@@ -220,8 +220,8 @@
 
 (fact "we can score an Individual with a Rubric (or set)"
   (let [random-dude (fn [] (random-individual token-generator 20))]
-    (:score (random-dude)) => nil
-    (> (:score (score-using-rubrics (random-dude) sine-rubrics)) 0) => true
+    (get-score (random-dude)) => nil
+    (> (get-score (score-using-rubrics (random-dude) sine-rubrics)) 0) => true
     ))
 
 
@@ -233,9 +233,9 @@
 
 (fact "we can score a whole population with `score-population`"
   (let [random-dude (fn [] (random-individual token-generator 20))]
-    (not-any? nil? 
-      (map 
-        :score 
+    (not-any? nil?
+      (map
+        get-score
         (score-population (random-population 100 random-dude)
           sine-rubrics)))) => true)
 

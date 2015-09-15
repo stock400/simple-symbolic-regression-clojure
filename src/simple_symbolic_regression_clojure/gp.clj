@@ -57,6 +57,10 @@
 (defn set-score [individual score]
   (assoc individual :score score))
 
+(defn get-score [individual]
+  (:score individual))
+
+
 
 (defn score-using-rubrics
   "assigns the :score value of an Individual by invoking `total-score-on` a set of Rubrics"
@@ -83,7 +87,7 @@
   a list containing all the Individuals with the lowest non-nil score;
   if no Individual has been scored, it returns an empty list"
   [individuals]
-  (let [scored-ones (filter #(some? (:score %)) individuals)
-        best (:score (first (sort-by :score scored-ones)))]
-    (filter #(= best (:score %)) scored-ones)
+  (let [scored-ones (filter #(some? (get-score %)) individuals)
+        best (get-score (first (sort-by get-score scored-ones)))]
+    (filter #(= best (get-score %)) scored-ones)
   ))
