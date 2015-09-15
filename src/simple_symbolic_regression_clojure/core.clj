@@ -19,13 +19,13 @@
 
 
 (def initial-sine-population
-  (score-population (random-population 5000 random-sine-guess) sine-rubrics))
+  (score-population (random-population 500 random-sine-guess) sine-rubrics))
 
 
 (defn print-generation-report
   [population]
   (println (str "Min error: "
-                (apply min (map :score population)))))
+                (apply min (map get-score population)))))
 
 
 (defn -main
