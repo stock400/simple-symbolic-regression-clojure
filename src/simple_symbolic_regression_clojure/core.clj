@@ -33,7 +33,7 @@
   [& args]
   (dorun
    (map print-generation-report
-        (take 10 (future-history initial-sine-population 0.05 sine-rubrics))))
+        (take 100 (future-history initial-sine-population 0.05 sine-rubrics))))
   ; The shutdown-agents call is necessary to make sure that things like "lein run"
   ; terminate when they're done. Otherwise they can hang around waiting for other
   ; threads to finish.
