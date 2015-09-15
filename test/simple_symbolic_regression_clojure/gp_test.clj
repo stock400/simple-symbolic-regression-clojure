@@ -199,7 +199,6 @@
 
 
 (fact "sine-rubrics contain the numerical values I imagine they should"
-  (count sine-rubrics) => 32
   (map #(Math/sin (get-in % [:input :x])) sine-rubrics) => (map :output sine-rubrics))
 
 
