@@ -1,6 +1,6 @@
-(ns simple-symbolic-regression-clojure.core-test
+(ns simple-symbolic-regression-clojure.interpreter-test
   (:use midje.sweet)
-  (:use [simple-symbolic-regression-clojure.core])
+  (:use [simple-symbolic-regression-clojure.interpreter])
   )
 
 (fact "it gets a empty program and an empty binding it returns nil with an empty stack"
