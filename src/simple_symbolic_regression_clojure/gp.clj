@@ -1,6 +1,19 @@
 (ns simple-symbolic-regression-clojure.gp
-   (:use [simple-symbolic-regression-clojure.core])
+  (:use [simple-symbolic-regression-clojure.interpreter])
+  (:require [clojure.core.reducers :as r])
   )
+
+;;; Evolutionary operators
+
+
+(defn uniform-crossover
+  "Takes two collections, and returns a new collection containing items taken with
+  equal probability from the two 'parents' at each location. The length of the
+  crossover-product is the shorter of the two lengths."
+  [mom dad]
+  (map (fn [a b] (if (< 0.5 (rand)) a b)) mom dad)
+  )
+
 
 (defn random-token
   "Argument is a list of tokens, including functions to generate values if you like;
@@ -11,13 +24,6 @@
     (eval (nth tokens (rand-int (count tokens))))
   ))
 
-(defn uniform-crossover
-  "Takes two collections, and returns a new collection containing items taken with
-  equal probability from the two 'parents' at each location. The length of the
-  crossover-product is the shorter of the two lengths."
-  [mom dad]
-  (map (fn [a b] (if (< 0.5 (rand)) a b)) mom dad)
-  )
 
 (defn uniform-mutation
   "Takes a collections, a vector of tokens (including functions), and a probability;
@@ -33,6 +39,7 @@
     mom)
   )
 
+
 (defn one-point-crossover
   "Takes two collections, and returns a new collection containing items taken from the
   front of the first and the tail of the second, switching at a randomly-chosen breakpoint
@@ -42,6 +49,9 @@
         dad-cut (rand-int (count dad))]
     (concat (take mom-cut mom) (drop dad-cut dad))
   ))
+
+
+;;; Individuals
 
 
 (defrecord Individual [script score])
@@ -61,12 +71,8 @@
   (:score individual))
 
 
+;;; Generating random scripts, individuals, etc.
 
-(defn score-using-rubrics
-  "assigns the :score value of an Individual by invoking `total-score-on` a set of Rubrics"
-  [individual rubrics]
-  (set-score individual (total-score-on (:script individual) rubrics))
-  )
 
 (defn random-script
   "Takes a collection of token-generators and a size, and samples the generators using
@@ -80,6 +86,67 @@
   "takes a token list and size, and returns an un-scored Individual"
   [tokens size]
   (make-individual (random-script tokens size)))
+
+
+(defn random-population
+  [pop-size constructor-fn]
+  (repeatedly pop-size constructor-fn))
+
+
+;;; Scoring (this is where the parallelism probably wants to go!)
+
+
+(defn score-using-rubrics
+  "assigns the score value of an Individual by invoking `total-score-on` a set of Rubrics"
+  [individual rubrics]
+  (set-score individual (total-score-on (:script individual) rubrics))
+  )
+
+
+(defn score-population
+  "takes an unscored population and returns the same ones with scores assigned"
+  [population rubrics]
+  (map #(score-using-rubrics % rubrics) population))
+
+
+;;; Main evolutionary loop
+
+
+; TODO: This is too problem specific and should be in core not in gp,
+; which will require making it an argument to make-baby?
+(def token-generator
+  ['(rand-int 100) :x :+ :- :* :÷])
+
+
+(defn make-unscored-baby
+  "creates a new *unscored* Individual by sampling a population (with uniform probability) and applying one-pt crossover and mutation"
+  [population mutation-rate]
+  (let [mom (:script (rand-nth population))
+        dad (:script (rand-nth population))
+        crossover (if (< (rand) 0.5) one-point-crossover uniform-crossover)
+        baby-script (uniform-mutation
+                     (crossover mom dad)
+                     token-generator
+                     mutation-rate)]
+    (make-individual baby-script)))
+
+
+(defn one-seasonal-cycle
+  "doubles the population size by calling `make-baby`, sorts the entire population by score (worse is bigger), removes the worst-scoring ones"
+  [population mutation-rate rubrics]
+  (let [carrying-capacity (count population)
+        new-brood (repeatedly
+                    carrying-capacity
+                    #(make-unscored-baby population mutation-rate))
+        scored-brood (score-population new-brood rubrics)]
+    (take carrying-capacity (sort-by get-score (concat population scored-brood)))
+    ))
+
+
+(defn future-history
+  "creates a lazy list of iterations by applying `one-seasonal-cycle` to an initial population"
+  [initial-pop mutation-rate rubrics]
+  (iterate #(one-seasonal-cycle % mutation-rate rubrics) initial-pop))
 
 
 (defn winners

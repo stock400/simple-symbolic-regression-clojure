@@ -193,24 +193,9 @@
   (Math/sin Math/PI) => (roughly 0.0 0.001))
 
 
-(defn random-population
-  [pop-size constructor-fn]
-  (repeatedly pop-size constructor-fn))
-
-
-(def token-generator
-  ['(rand-int 100) :x :+ :- :* :÷])
-
-
 (fact "we can make a population of random individuals"
   (let [random-dude (fn [] (random-individual token-generator 20))]
     (count (random-population 100 random-dude)) => 100))
-
-
-(def sine-rubrics
-  (repeatedly 32 
-    #(let [x (rand (* 2 Math/PI))]
-      (->Rubric {:x x} (Math/sin x)))))
 
 
 (fact "sine-rubrics contain the numerical values I imagine they should"
@@ -224,13 +209,6 @@
     (> (get-score (score-using-rubrics (random-dude) sine-rubrics)) 0) => true
     ))
 
-
-(defn score-population
-  "takes an unscored population and returns the same ones with scores assigned"
-  [population rubrics]
-  (map #(score-using-rubrics % rubrics) population))
-
-
 (fact "we can score a whole population with `score-population`"
   (let [random-dude (fn [] (random-individual token-generator 20))]
     (not-any? nil?
@@ -239,65 +217,20 @@
         (score-population (random-population 100 random-dude)
           sine-rubrics)))) => true)
 
-
-(defn make-baby
-  "creates a new scored Individual by sampling a population (with uniform probability) and applying one-pt crossover and mutation, then scoring with the rubrics"
-  [population mutation-rate rubrics]
-  (let [mom (:script (rand-nth population))
-        dad (:script (rand-nth population))
-        baby1-script (uniform-mutation
-                      (one-point-crossover mom dad)
-                      token-generator
-                      mutation-rate)
-        baby2-script (uniform-mutation
-                      (uniform-crossover mom dad)
-                      token-generator
-                      mutation-rate)
-        baby-script (if 
-                      (< (rand-int 20) 10)
-                      baby1-script
-                      baby2-script)]
-    (make-individual baby-script (total-score-on baby-script rubrics))))
-
-
-(fact "`make-baby` produces a new scored Individual"
+(fact "`make-unscored-baby` produces a new unscored Individual"
   (let [random-dude (fn [] (random-individual token-generator 100))
         population (score-population
                     (random-population 10 random-dude)
                     sine-rubrics)]
-    (> (count (:script (make-baby population 0.01 sine-rubrics))) 0)  => true
-    (nil? (:score (make-baby population 0.01 sine-rubrics))) => false
+    (> (count (:script (make-unscored-baby population 0.01))) 0)  => true
+    (nil? (get-score (make-unscored-baby population 0.01))) => true
   ))
 
 
-(defn one-seasonal-cycle
-  "doubles the population size by calling `make-baby`, sorts the entire population by score (worse is bigger), removes the worst-scoring ones"
-  [population mutation-rate rubrics]
-  (let [carrying-capacity (count population)
-        new-brood (repeatedly
-                    carrying-capacity
-                    #(make-baby population mutation-rate rubrics))]
-    (take carrying-capacity (sort-by :score (concat population new-brood)))
-    ))
+; (println (sort-by get-score initial-sine-population))
 
+; (println (sort-by get-score (one-seasonal-cycle initial-sine-population 0.01 sine-rubrics)))
 
-(def random-sine-guess (fn [] (random-individual token-generator 100)))
-
-
-(def initial-sine-population
-  (score-population (random-population 500 random-sine-guess) sine-rubrics))
-
-
-; (println (sort-by :score initial-sine-population))
-
-; (println (sort-by :score (one-seasonal-cycle initial-sine-population 0.01 sine-rubrics)))
-
-(defn future-history
-  "creates a lazy list of iterations by applying `one-seasonal-cycle` to an initial population"
-  [initial-pop mutation-rate rubrics]
-  (iterate #(one-seasonal-cycle % mutation-rate rubrics) initial-pop))
-
-
-(println (map
-          winners 
-          (take 10 (future-history initial-sine-population 0.05 sine-rubrics))))
+;; (println (map
+;;           winners
+;;           (take 10 (future-history initial-sine-population 0.05 sine-rubrics))))
