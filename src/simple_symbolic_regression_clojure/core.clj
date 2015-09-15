@@ -10,8 +10,8 @@
 ; wired in as the target, but this will do for the class.
 
 (def sine-rubrics
-  (repeatedly 32
-    #(let [x (rand (* 2 Math/PI))]
+  (repeatedly 100
+    #(let [x (rand (* 20 Math/PI))]
       (->Rubric {:x x} (Math/sin x)))))
 
 
@@ -33,7 +33,7 @@
   [& args]
   (dorun
    (map print-generation-report
-        (take 100 (future-history initial-sine-population 0.05 sine-rubrics))))
+        (take 10 (future-history initial-sine-population 0.05 sine-rubrics))))
   ; The shutdown-agents call is necessary to make sure that things like "lein run"
   ; terminate when they're done. Otherwise they can hang around waiting for other
   ; threads to finish.
