@@ -68,7 +68,7 @@
   (assoc individual :score score))
 
 (defn get-score [individual]
-  (:score (deref individual)))
+  (:score individual))
 
 
 ;;; Generating random scripts, individuals, etc.
