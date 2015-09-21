@@ -75,4 +75,4 @@
     score-penalty))
 
 (defn total-score-on [script rubrics]
-  (future (reduce + (map (partial score-on script) rubrics))) (deref rubrics))
+  (reduce + (map (partial score-on script) rubrics)))
