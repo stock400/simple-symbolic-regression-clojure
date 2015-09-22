@@ -121,11 +121,11 @@
 (defn make-unscored-baby
   "creates a new *unscored* Individual by sampling a population (with uniform probability) and applying one-pt crossover and mutation"
   [population mutation-rate]
-  (let [mom (:script (rand-nth population))
-        dad (:script (rand-nth population))
+  (let [mom (future (:script (rand-nth population)))
+        dad (future (:script (rand-nth population)))
         crossover (if (< (rand) 0.5) one-point-crossover uniform-crossover)
         baby-script (uniform-mutation
-                     (crossover mom dad)
+                     (crossover @mom @dad)
                      token-generator
                      mutation-rate)]
     (make-individual baby-script)))
@@ -134,12 +134,12 @@
 (defn one-seasonal-cycle
   "doubles the population size by calling `make-baby`, sorts the entire population by score (worse is bigger), removes the worst-scoring ones"
   [population mutation-rate rubrics]
-  (let [carrying-capacity (count population)
+  (let [carrying-capacity (future (count population))
         new-brood (repeatedly
-                    carrying-capacity
+                    @carrying-capacity
                     #(make-unscored-baby population mutation-rate))
         scored-brood (score-population new-brood rubrics)]
-    (take carrying-capacity (sort-by get-score (concat population scored-brood)))
+    (take @carrying-capacity (sort-by get-score (concat population scored-brood)))
     ))
 
 
@@ -154,7 +154,7 @@
   a list containing all the Individuals with the lowest non-nil score;
   if no Individual has been scored, it returns an empty list"
   [individuals]
-  (let [scored-ones (filter #(some? (get-score %)) individuals)
-        best (get-score (first (sort-by get-score scored-ones)))]
-    (filter #(= best (get-score %)) scored-ones)
+  (let [scored-ones (future (filter #(some? (get-score %)) individuals))
+        best (get-score (first (sort-by get-score @scored-ones)))]
+    (filter #(= best (get-score %)) @scored-ones)
   ))
